@@ -1,4 +1,4 @@
-# Testes-de-Performance-i-EducarTestes de Performance - i-Educar
+# Testes-de-Performance-i-Educar
 
 ## Sobre o projeto
 
