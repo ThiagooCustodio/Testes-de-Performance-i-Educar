@@ -23,4 +23,4 @@ class UsuarioLogin(HttpUser):
 
     @task
     def acessar_login(self):
-        self.client.get("/login")
+        self.client.get("/login")  
