@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Testes de Performance - i-Educar
+=======
+# Testes-de-Performance-i-Educar
+>>>>>>> 87d9523799a45df536f4c03e8197940906cd0a12
 
 ## Sobre o projeto
 
