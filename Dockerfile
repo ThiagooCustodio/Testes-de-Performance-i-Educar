@@ -4,7 +4,6 @@ FROM python:3.11-slim
 LABEL maintainer="seu-email@exemplo.com"
 LABEL description="i-educar — testes de performance com Locust"
 
-# Variáveis de ambiente com defaults
 ENV TARGET_HOST=http://host.docker.internal:8000 \
     IEDUCAR_USER=comunidade \
     IEDUCAR_PASS=Comunidade@1 \
@@ -15,7 +14,6 @@ ENV TARGET_HOST=http://host.docker.internal:8000 \
 
 WORKDIR /app
 
-# Instala dependências do sistema (para matplotlib renderizar em modo headless)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         bash \
         curl \
@@ -23,19 +21,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia e instala dependências Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o código
 COPY . .
 
-# Garante que os diretórios de saída existem e têm permissão
-RUN mkdir -p results/10users results/50users results/100users reports \
-    && chmod +x run_tests.sh
+RUN mkdir -p results reports \
+    && chmod +x run_test.sh
 
-# Volume para persistir resultados fora do container
 VOLUME ["/app/results", "/app/reports"]
 
-# Entrypoint padrão: executa todos os testes e gera relatório
-CMD ["bash", "-c", "./run_tests.sh ${TARGET_HOST} && python scripts/generate_report.py"]
+CMD ["bash", "-c", "./run_test.sh ${TARGET_HOST}"]

@@ -12,7 +12,7 @@ x-locust-common: &locust-common
     context: .
     dockerfile: Dockerfile
   environment:
-    TARGET_HOST:    ${TARGET_HOST:-http://host.docker.internal:8000}
+    TARGET_HOST:    ${TARGET_HOST:-http://host.docker.internal}
     IEDUCAR_USER:   ${IEDUCAR_USER:-comunidade}
     IEDUCAR_PASS:   ${IEDUCAR_PASS:-Comunidade@1}
     TEST_DURATION:  ${TEST_DURATION:-60s}
@@ -21,23 +21,20 @@ x-locust-common: &locust-common
     - ./results:/app/results
     - ./reports:/app/reports
   extra_hosts:
-    - "host.docker.internal:host-gateway"   # acessa o host do Docker (Linux)
+    - "host.docker.internal:host-gateway"
 
 services:
-  # --------------------------------------------------------------------------
-  # Modo distribuído — master coordena, workers executam
-  # --------------------------------------------------------------------------
   locust-master:
     <<: *locust-common
     container_name: ieducar_locust_master
     command: >
       locust
         --master
-        --host=${TARGET_HOST:-http://host.docker.internal:8000}
+        --host=${TARGET_HOST:-http://host.docker.internal}
         --web-port=8089
         -f /app/locustfile.py
     ports:
-      - "8089:8089"    # interface web do Locust
+      - "8089:8089"
     profiles: ["distributed"]
 
   locust-worker:
@@ -50,17 +47,15 @@ services:
     depends_on:
       - locust-master
     deploy:
-      replicas: 3     
+      replicas: 3
     profiles: ["distributed"]
 
-  # Modo headless — roda todos os níveis de carga e gera relatório
   locust-headless:
     <<: *locust-common
     container_name: ieducar_locust_headless
-    command: bash -c "./run_tests.sh ${TARGET_HOST:-http://host.docker.internal:8080}"
+    command: bash -c "./run_test.sh ${TARGET_HOST:-http://host.docker.internal}"
     profiles: ["headless"]
 
-  # Geração do relatório PDF (executa após os testes)
   report:
     <<: *locust-common
     container_name: ieducar_report
