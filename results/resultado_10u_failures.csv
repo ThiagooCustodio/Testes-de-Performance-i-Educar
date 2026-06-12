@@ -1,2 +1,2 @@
 Method,Name,Error,Occurrences
-GET,GET /login,CatchResponseError('GET /login retornou 0'),305
+POST,POST /login [falha esperada],CatchResponseError('Resposta inesperada: 302'),10
