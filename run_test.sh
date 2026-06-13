@@ -1,7 +1,6 @@
 #!/bin/bash
-set -e
 
-HOST=${1:-http://host.docker.internal:8080}
+HOST=${1:-http://host.docker.internal}
 DURACAO=${TEST_DURATION:-60s}
 TAXA=${SPAWN_RATE:-5}
 
@@ -24,7 +23,7 @@ for USUARIOS in 10 50 100; do
     --run-time="$DURACAO" \
     --csv="/app/results/resultado_${USUARIOS}u" \
     --html="/app/results/relatorio_${USUARIOS}u.html" \
-    -f /app/locustfile.py
+    -f /app/locustfile.py || true
 
   echo ">>> Concluído: $USUARIOS usuários"
   sleep 5

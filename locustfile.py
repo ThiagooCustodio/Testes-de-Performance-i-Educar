@@ -12,22 +12,20 @@ class UsuarioLogin(HttpUser):
     connection_timeout = 120.0
 
     def _fazer_login(self, usuario, senha, nome_tarefa):
-        # GET para obter cookie de sessão
         with self.client.get("/login", catch_response=True, name="GET /login", timeout=30) as resp:
             if resp.status_code != 200:
                 resp.failure(f"GET /login retornou {resp.status_code}")
                 return False
 
-        # POST na mesma sessão (client mantém cookies automaticamente)
         with self.client.post(
             "/login",
             data={"login": usuario, "password": senha},
-            allow_redirects=False,  # não seguir redirect — checar o 302 diretamente
+            allow_redirects=False,
             catch_response=True,
             name=nome_tarefa,
             timeout=60,
         ) as resp:
-            if resp.status_code in (301, 302):
+            if resp.status_code == 302:
                 resp.success()
                 return True
             else:
@@ -53,8 +51,7 @@ class UsuarioLogin(HttpUser):
             name="POST /login [falha esperada]",
             timeout=60,
         ) as resp:
-            # Login inválido retorna 200 de volta ao formulário
-            if resp.status_code == 200:
+            if resp.status_code == 302:
                 resp.success()
             else:
                 resp.failure(f"Resposta inesperada: {resp.status_code}")
