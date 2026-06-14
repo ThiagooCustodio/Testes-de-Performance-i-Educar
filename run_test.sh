@@ -13,19 +13,21 @@ echo "============================================"
 
 for USUARIOS in 10 50 100; do
   echo ""
-  echo ">>> Rodando com $USUARIOS usuários simultâneos..."
-
-  locust \
-    --headless \
-    --host="$HOST" \
-    --users="$USUARIOS" \
-    --spawn-rate="$TAXA" \
+  echo ">>> Login — $USUARIOS usuários..."
+  locust --headless --host="$HOST" --users="$USUARIOS" --spawn-rate=5 \
     --run-time="$DURACAO" \
-    --csv="/app/results/resultado_${USUARIOS}u" \
-    --html="/app/results/relatorio_${USUARIOS}u.html" \
-    -f /app/locustfile.py || true
+    --csv="/app/results/login_${USUARIOS}u" \
+    --html="/app/results/login_${USUARIOS}u.html" \
+    -f /app/locustfile.py --class-picker UsuarioLoginTeste || true
+  sleep 5
 
-  echo ">>> Concluído: $USUARIOS usuários"
+  echo ""
+  echo ">>> Aluno — $USUARIOS usuários..."
+  locust --headless --host="$HOST" --users="$USUARIOS" --spawn-rate=5 \
+    --run-time="$DURACAO" \
+    --csv="/app/results/aluno_${USUARIOS}u" \
+    --html="/app/results/aluno_${USUARIOS}u.html" \
+    -f /app/locustfile.py --class-picker UsuarioAlunoTeste || true
   sleep 5
 done
 

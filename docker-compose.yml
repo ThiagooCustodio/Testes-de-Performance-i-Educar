@@ -13,8 +13,8 @@ x-locust-common: &locust-common
     dockerfile: Dockerfile
   environment:
     TARGET_HOST:    ${TARGET_HOST:-http://host.docker.internal}
-    IEDUCAR_USER:   ${IEDUCAR_USER:-comunidade}
-    IEDUCAR_PASS:   ${IEDUCAR_PASS:-Comunidade@1}
+    IEDUCAR_USER:   ${IEDUCAR_USER:-admin}
+    IEDUCAR_PASS:   ${IEDUCAR_PASS:-admin}
     TEST_DURATION:  ${TEST_DURATION:-60s}
     SPAWN_RATE:     ${SPAWN_RATE:-5}
   volumes:
