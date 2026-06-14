@@ -1,0 +1,3 @@
+Method,Name,Error,Occurrences
+POST,POST /api pessoa [criar],CatchResponseError('Criar pessoa falhou — status 404'),8
+GET,GET /api aluno [consultar],CatchResponseError('Consulta retornou 404'),2

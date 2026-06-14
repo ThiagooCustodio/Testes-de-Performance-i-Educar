@@ -1,0 +1,2 @@
+Method,Name,Error,Occurrences
+GET,GET /login,CatchResponseError('GET /login retornou 0'),50

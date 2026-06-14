@@ -36,6 +36,14 @@ services:
     ports:
       - "8089:8089"
     profiles: ["distributed"]
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
 
   locust-worker:
     <<: *locust-common
@@ -46,21 +54,44 @@ services:
         -f /app/locustfile.py
     depends_on:
       - locust-master
+    profiles: ["distributed"]
     deploy:
       replicas: 3
-    profiles: ["distributed"]
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
 
   locust-headless:
     <<: *locust-common
     container_name: ieducar_locust_headless
     command: bash -c "./run_test.sh ${TARGET_HOST:-http://host.docker.internal}"
     profiles: ["headless"]
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
 
   report:
     <<: *locust-common
     container_name: ieducar_report
     command: python scripts/generate_report.py
     profiles: ["report"]
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
 
 # ============================================================================
 # Uso rápido:
