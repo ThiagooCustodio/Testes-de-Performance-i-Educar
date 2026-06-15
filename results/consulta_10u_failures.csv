@@ -1,4 +1,1 @@
 Method,Name,Error,Occurrences
-GET,GET /api aluno [por id],CatchResponseError('Consulta por ID falhou — status 404'),3
-GET,GET /api matriculas [aluno],CatchResponseError('Consulta matrículas falhou — status 404'),3
-GET,GET /api aluno-search [nome],CatchResponseError('Busca por nome falhou — status 404'),4

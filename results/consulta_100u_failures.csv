@@ -1,2 +1,5 @@
 Method,Name,Error,Occurrences
-GET,GET /login,CatchResponseError('GET /login retornou 0'),100
+GET,GET /module/Api/Aluno [por id],CatchResponseError('Consulta por ID falhou — status 0'),1
+GET,GET /module/Api/Aluno [aluno-search],CatchResponseError('Busca por nome falhou — status 0'),4
+GET,GET /login,CatchResponseError('GET /login retornou 0'),60
+GET,GET /module/Api/Aluno [matriculas],CatchResponseError('Consulta matrículas falhou — status 0'),7

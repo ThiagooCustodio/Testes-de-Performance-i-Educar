@@ -14,15 +14,13 @@ class UsuarioConsultaTeste(HttpUser):
 
     @task(40)
     def buscar_aluno_por_nome(self):
-        """Busca alunos pelo nome via API."""
         ok = fazer_login(self.client, USUARIO_VALIDO, SENHA_VALIDA, "POST /login [consulta nome]")
         if not ok:
             return
-
         with self.client.get(
-            "/intranet/api/?acao=get&resource=aluno-search&nome=Teste",
+            "/module/Api/Aluno?oper=get&resource=aluno-search&query=Teste",
             catch_response=True,
-            name="GET /api aluno-search [nome]",
+            name="GET /module/Api/Aluno [aluno-search]",
             timeout=30,
         ) as resp:
             if resp.status_code == 200:
@@ -32,36 +30,46 @@ class UsuarioConsultaTeste(HttpUser):
 
     @task(40)
     def consultar_aluno_por_id(self):
-        """Consulta dados completos de um aluno pelo ID."""
         ok = fazer_login(self.client, USUARIO_VALIDO, SENHA_VALIDA, "POST /login [consulta id]")
         if not ok:
             return
-
         with self.client.get(
-            "/intranet/api/?acao=get&resource=aluno&id=3",
+            "/module/Api/Aluno?oper=get&resource=aluno&id=3",
             catch_response=True,
-            name="GET /api aluno [por id]",
+            name="GET /module/Api/Aluno [por id]",
             timeout=30,
         ) as resp:
             if resp.status_code == 200:
-                resp.success()
+                try:
+                    data = resp.json()
+                    if not data.get("any_error_msg"):
+                        resp.success()
+                    else:
+                        resp.failure("API retornou erro")
+                except Exception:
+                    resp.failure("Resposta inválida")
             else:
                 resp.failure(f"Consulta por ID falhou — status {resp.status_code}")
 
     @task(20)
     def consultar_matriculas_aluno(self):
-        """Consulta matrículas de um aluno específico."""
         ok = fazer_login(self.client, USUARIO_VALIDO, SENHA_VALIDA, "POST /login [consulta matriculas]")
         if not ok:
             return
-
         with self.client.get(
-            "/intranet/api/?acao=get&resource=matriculas&aluno_id=3",
+            "/module/Api/Aluno?oper=get&resource=matriculas&aluno_id=3",
             catch_response=True,
-            name="GET /api matriculas [aluno]",
+            name="GET /module/Api/Aluno [matriculas]",
             timeout=30,
         ) as resp:
             if resp.status_code == 200:
-                resp.success()
+                try:
+                    data = resp.json()
+                    if not data.get("any_error_msg"):
+                        resp.success()
+                    else:
+                        resp.failure("API retornou erro")
+                except Exception:
+                    resp.failure("Resposta inválida")
             else:
                 resp.failure(f"Consulta matrículas falhou — status {resp.status_code}")

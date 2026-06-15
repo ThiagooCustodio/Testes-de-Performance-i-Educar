@@ -16,9 +16,9 @@ class UsuarioAlunoTeste(HttpUser):
     def _criar_pessoa(self):
         nome = f"Aluno Teste {uuid.uuid4().hex[:8].upper()}"
         with self.client.post(
-            "/intranet/api/",
+            "/module/Api/Pessoa",
             data={
-                "acao": "post",
+                "oper": "post",
                 "resource": "pessoa",
                 "nome": nome,
                 "sexo": "M",
@@ -26,12 +26,13 @@ class UsuarioAlunoTeste(HttpUser):
             },
             allow_redirects=False,
             catch_response=True,
-            name="POST /api pessoa [criar]",
+            name="POST /module/Api/Pessoa [criar]",
             timeout=60,
         ) as resp:
             if resp.status_code in (200, 302):
                 try:
-                    pessoa_id = resp.json().get("pessoa_id")
+                    data = resp.json()
+                    pessoa_id = data.get("pessoa_id") or data.get("id")
                     if pessoa_id:
                         resp.success()
                         return pessoa_id
@@ -44,9 +45,9 @@ class UsuarioAlunoTeste(HttpUser):
 
     def _criar_aluno(self, pessoa_id):
         with self.client.post(
-            "/intranet/api/",
+            "/module/Api/Aluno",
             data={
-                "acao": "post",
+                "oper": "post",
                 "resource": "aluno",
                 "pessoa_id": pessoa_id,
                 "tipo_responsavel": "mae",
@@ -54,17 +55,22 @@ class UsuarioAlunoTeste(HttpUser):
             },
             allow_redirects=False,
             catch_response=True,
-            name="POST /api aluno [inserir]",
+            name="POST /module/Api/Aluno [inserir]",
             timeout=60,
         ) as resp:
             if resp.status_code in (200, 302):
                 try:
-                    if resp.json().get("id"):
+                    data = resp.json()
+                    if data.get("id") and not data.get("any_error_msg"):
                         resp.success()
                         return True
+                    else:
+                        msgs = data.get("msgs", [])
+                        erro = msgs[0]["msg"] if msgs else "erro desconhecido"
+                        resp.failure(f"Erro ao criar aluno: {erro}")
                 except Exception:
                     pass
-                resp.failure("id do aluno não retornado")
+                resp.failure("Resposta inválida ao criar aluno")
             else:
                 resp.failure(f"Criar aluno falhou — status {resp.status_code}")
         return False
@@ -81,16 +87,23 @@ class UsuarioAlunoTeste(HttpUser):
 
     @task(40)
     def consultar_alunos(self):
-        ok = fazer_login(self.client, USUARIO_VALIDO, SENHA_VALIDA, "POST /login [consulta]")
+        ok = fazer_login(self.client, USUARIO_VALIDO, SENHA_VALIDA, "POST /login [consulta aluno]")
         if not ok:
             return
         with self.client.get(
-            "/intranet/api/?acao=get&resource=aluno-search&nome=Teste",
+            "/module/Api/Aluno?oper=get&resource=aluno&id=3",
             catch_response=True,
-            name="GET /api aluno [consultar]",
+            name="GET /module/Api/Aluno [por id]",
             timeout=30,
         ) as resp:
             if resp.status_code == 200:
-                resp.success()
+                try:
+                    data = resp.json()
+                    if not data.get("any_error_msg"):
+                        resp.success()
+                    else:
+                        resp.failure("API retornou erro")
+                except Exception:
+                    resp.failure("Resposta inválida")
             else:
                 resp.failure(f"Consulta retornou {resp.status_code}")

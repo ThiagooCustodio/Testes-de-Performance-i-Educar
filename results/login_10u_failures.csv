@@ -1,2 +1,2 @@
 Method,Name,Error,Occurrences
-GET,GET /alunos,CatchResponseError('Listagem retornou 404'),5
+GET,GET /alunos,CatchResponseError('Listagem retornou 404'),8

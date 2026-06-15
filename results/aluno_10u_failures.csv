@@ -1,3 +1,2 @@
 Method,Name,Error,Occurrences
-POST,POST /api pessoa [criar],CatchResponseError('Criar pessoa falhou — status 404'),5
-GET,GET /api aluno [consultar],CatchResponseError('Consulta retornou 404'),5
+POST,POST /module/Api/Pessoa [criar],CatchResponseError('pessoa_id não retornado'),12
