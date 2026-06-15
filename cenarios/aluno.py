@@ -1,5 +1,6 @@
 import os
-import uuid
+import random
+import string
 from locust import task, between, HttpUser
 from cenarios.login import fazer_login
 
@@ -14,7 +15,12 @@ class UsuarioAlunoTeste(HttpUser):
     connection_timeout = 120.0
 
     def _criar_pessoa(self):
-        nome = f"Aluno Teste {uuid.uuid4().hex[:8].upper()}"
+        nome = "AlunoTeste" + "".join(
+            random.choices(string.ascii_uppercase, k=8)
+        )
+
+        print(f"NOME GERADO: {nome}")
+
         with self.client.post(
             "/module/Api/Pessoa",
             data={
@@ -32,15 +38,27 @@ class UsuarioAlunoTeste(HttpUser):
             if resp.status_code in (200, 302):
                 try:
                     data = resp.json()
+
+                    print("\n=== RESPOSTA API PESSOA ===")
+                    print(data)
+                    print("==========================\n")
+
                     pessoa_id = data.get("pessoa_id") or data.get("id")
+
                     if pessoa_id:
                         resp.success()
                         return pessoa_id
-                except Exception:
-                    pass
+
+                except Exception as e:
+                    print("\n=== ERRO AO LER JSON ===")
+                    print(resp.text)
+                    print(e)
+                    print("========================\n")
+
                 resp.failure("pessoa_id não retornado")
             else:
                 resp.failure(f"Criar pessoa falhou — status {resp.status_code}")
+
         return None
 
     def _criar_aluno(self, pessoa_id):
@@ -52,6 +70,9 @@ class UsuarioAlunoTeste(HttpUser):
                 "pessoa_id": pessoa_id,
                 "tipo_responsavel": "mae",
                 "tipo_transporte": "nenhum",
+                "deficiencias": "",      # ← campo obrigatório
+                "transtornos": "",       # ← campo obrigatório
+                "beneficios": "",        # ← campo obrigatório
             },
             allow_redirects=False,
             catch_response=True,

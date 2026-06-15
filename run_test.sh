@@ -10,7 +10,7 @@ echo " i-Educar — Testes de Performance"
 echo " Alvo: $HOST"
 echo "============================================"
 
-for USUARIOS in 10 50 100; do
+for USUARIOS in 1 5 10; do
   echo ""
   echo ">>> Login — $USUARIOS usuários..."
   locust --headless --host="$HOST" --users="$USUARIOS" --spawn-rate=5 \

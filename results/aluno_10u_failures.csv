@@ -1,2 +1,2 @@
 Method,Name,Error,Occurrences
-POST,POST /module/Api/Pessoa [criar],CatchResponseError('pessoa_id não retornado'),12
+POST,POST /module/Api/Aluno [inserir],CatchResponseError('Criar aluno falhou — status 500'),8
