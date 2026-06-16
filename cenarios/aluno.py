@@ -50,7 +50,7 @@ class UsuarioAlunoTeste(HttpUser):
                         return pessoa_id
 
                 except Exception as e:
-                    print("\n=== ERRO AO LER JSON ===")
+                    print("\n=== ERRO AO LER JSON PESSOA ===")
                     print(resp.text)
                     print(e)
                     print("========================\n")
@@ -64,16 +64,20 @@ class UsuarioAlunoTeste(HttpUser):
     def _criar_aluno(self, pessoa_id):
         with self.client.post(
             "/module/Api/Aluno",
-            data={
-                "oper": "post",
-                "resource": "aluno",
-                "pessoa_id": pessoa_id,
-                "tipo_responsavel": "mae",
-                "tipo_transporte": "nenhum",
-                "deficiencias": "",      # ← campo obrigatório
-                "transtornos": "",       # ← campo obrigatório
-                "beneficios": "",        # ← campo obrigatório
-            },
+            # Usando lista de tuplas para permitir chaves repetidas (notação array PHP)
+            data=[
+                ("oper", "post"),
+                ("resource", "aluno"),
+                ("id_pessoa", pessoa_id),
+                ("pessoa_id", pessoa_id),
+                ("tipo_responsavel", "mae"),
+                ("tipo_transporte", "nenhum"),
+                ("deficiencias[]", ""),
+                ("transtornos[]", ""),
+                ("beneficios[]", ""),
+                ("analfabeto", "0"),
+                ("emancipado", "0"),
+            ],
             allow_redirects=False,
             catch_response=True,
             name="POST /module/Api/Aluno [inserir]",
@@ -82,18 +86,23 @@ class UsuarioAlunoTeste(HttpUser):
             if resp.status_code in (200, 302):
                 try:
                     data = resp.json()
-                    if data.get("id") and not data.get("any_error_msg"):
+                    aluno_id = data.get("id") or data.get("aluno_id")
+
+                    if aluno_id and not data.get("any_error_msg"):
                         resp.success()
                         return True
                     else:
                         msgs = data.get("msgs", [])
-                        erro = msgs[0]["msg"] if msgs else "erro desconhecido"
+                        erro = msgs[0]["msg"] if msgs else "Erro interno no JSON"
                         resp.failure(f"Erro ao criar aluno: {erro}")
+                        return False
                 except Exception:
-                    pass
-                resp.failure("Resposta inválida ao criar aluno")
+                    resp.failure("Resposta 200 ok, mas não enviou JSON válido")
             else:
-                resp.failure(f"Criar aluno falhou — status {resp.status_code}")
+                resp.failure(
+                    f"Criar aluno falhou — status {resp.status_code}. "
+                    f"Resposta: {resp.text[:200]}"
+                )
         return False
 
     @task(60)

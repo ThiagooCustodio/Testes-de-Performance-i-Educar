@@ -12,11 +12,12 @@ x-locust-common: &locust-common
     context: .
     dockerfile: Dockerfile
   environment:
-    TARGET_HOST:    ${TARGET_HOST:-http://host.docker.internal}
-    IEDUCAR_USER:   ${IEDUCAR_USER:-admin}
-    IEDUCAR_PASS:   ${IEDUCAR_PASS:-admin}
-    TEST_DURATION:  ${TEST_DURATION:-60s}
-    SPAWN_RATE:     ${SPAWN_RATE:-5}
+    TARGET_HOST:        ${TARGET_HOST:-http://host.docker.internal}
+    IEDUCAR_USER:       ${IEDUCAR_USER:-admin}
+    IEDUCAR_PASS:       ${IEDUCAR_PASS:-admin}
+    IEDUCAR_COD_INSTITUICAO: ${IEDUCAR_COD_INSTITUICAO:-1}
+    TEST_DURATION:      ${TEST_DURATION:-60s}
+    SPAWN_RATE:         ${SPAWN_RATE:-5}
   volumes:
     - ./results:/app/results
     - ./reports:/app/reports
@@ -104,6 +105,6 @@ services:
 #   docker compose --profile distributed up --scale locust-worker=4
 #   # → acesse http://localhost:8089
 #
-#   # Sobrescrever host alvo:
-#   TARGET_HOST=http://192.168.1.100 docker compose --profile headless up
+#   # Sobrescrever host alvo e instituição:
+#   TARGET_HOST=http://192.168.1.100 IEDUCAR_COD_INSTITUICAO=2 docker compose --profile headless up
 # ============================================================================

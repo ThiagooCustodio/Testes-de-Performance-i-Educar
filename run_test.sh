@@ -38,6 +38,16 @@ for USUARIOS in 1 5 10; do
     --html="/app/results/consulta_${USUARIOS}u.html" \
     -f /app/locustfile.py --class-picker UsuarioConsultaTeste || true
   sleep 5
+
+  echo ""
+  echo ">>> Exportação de Usuários — $USUARIOS usuários..."
+  sleep 30   # ← aguarda o servidor se recuperar
+  locust --headless --host="$HOST" --users="$USUARIOS" --spawn-rate=5 \
+    --run-time="$DURACAO" \
+    --csv="/app/results/exportacao_${USUARIOS}u" \
+    --html="/app/results/exportacao_${USUARIOS}u.html" \
+    -f /app/locustfile.py --class-picker UsuarioExportacaoTeste || true
+  sleep 5
 done
 
 echo ""
