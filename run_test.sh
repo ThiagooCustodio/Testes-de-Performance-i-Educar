@@ -31,7 +31,7 @@ for USUARIOS in 1 5 10; do
 
   echo ""
   echo ">>> Consulta — $USUARIOS usuários..."
-  sleep 30   # ← aguarda o servidor se recuperar
+  sleep 30
   locust --headless --host="$HOST" --users="$USUARIOS" --spawn-rate=5 \
     --run-time="$DURACAO" \
     --csv="/app/results/consulta_${USUARIOS}u" \
@@ -41,13 +41,24 @@ for USUARIOS in 1 5 10; do
 
   echo ""
   echo ">>> Exportação de Usuários — $USUARIOS usuários..."
-  sleep 30   # ← aguarda o servidor se recuperar
+  sleep 30
   locust --headless --host="$HOST" --users="$USUARIOS" --spawn-rate=5 \
     --run-time="$DURACAO" \
     --csv="/app/results/exportacao_${USUARIOS}u" \
     --html="/app/results/exportacao_${USUARIOS}u.html" \
     -f /app/locustfile.py --class-picker UsuarioExportacaoTeste || true
   sleep 5
+
+  echo ""
+  echo ">>> Navegação — $USUARIOS usuários..."
+  sleep 30
+  locust --headless --host="$HOST" --users="$USUARIOS" --spawn-rate=5 \
+    --run-time="$DURACAO" \
+    --csv="/app/results/navegacao_${USUARIOS}u" \
+    --html="/app/results/navegacao_${USUARIOS}u.html" \
+    -f /app/locustfile.py --class-picker UsuarioNavegacaoTeste || true
+  sleep 5
+
 done
 
 echo ""
