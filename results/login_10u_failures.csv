@@ -1,2 +1,0 @@
-Method,Name,Error,Occurrences
-GET,GET /alunos,CatchResponseError('GET /alunos — status 404'),5

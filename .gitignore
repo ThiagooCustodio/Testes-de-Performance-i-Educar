@@ -1,0 +1,18 @@
+@"
+# Resultados dos testes
+results/
+reports/
+
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+
+# Ambiente
+.env
+
+# Windows
+Thumbs.db
+desktop.ini
+"@ | Set-Content "C:\Users\Usuario\Teste i-educar\.gitignore" -Encoding UTF8
